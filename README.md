@@ -146,7 +146,7 @@ MIT
 
 ## 作者
 
-庄赫（zhuang-HE）— WorkBuddy AI 平台
+（zhuang-HE）— WorkBuddy AI 平台
 
 ## 致谢
 
