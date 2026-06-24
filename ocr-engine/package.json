@@ -1,0 +1,17 @@
+{
+  "name": "ocr-engine",
+  "version": "0.1.0",
+  "description": "WorkBuddy OCR Engine MCP Server — 确定性工程层，代码审查预处理/后处理",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js",
+    "test": "node test/basic.test.js"
+  },
+  "keywords": ["workbuddy", "mcp", "code-review", "ocr", "deterministic"],
+  "author": "庄赫",
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0"
+  }
+}

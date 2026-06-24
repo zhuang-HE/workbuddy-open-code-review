@@ -1,0 +1,265 @@
+{
+  "_description": "OCR Engine 默认审查规则 — 四级优先级链的最低层",
+  "default_exclude": [
+    "**/node_modules/**",
+    "**/vendor/**",
+    "**/dist/**",
+    "**/build/**",
+    "**/.git/**",
+    "**/__pycache__/**",
+    "**/*.min.js",
+    "**/*.min.css",
+    "**/*.bundle.js",
+    "**/*.generated.*",
+    "package-lock.json",
+    "yarn.lock",
+    "pnpm-lock.yaml"
+  ],
+  "test_patterns": [
+    "*_test.go",
+    "*Test.java",
+    "*Test.kt",
+    "*.spec.{js,jsx,ts,tsx}",
+    "*.test.{js,jsx,ts,tsx}",
+    "test_*.py",
+    "*_test.py",
+    "**/test/**",
+    "**/tests/**",
+    "**/__tests__/**",
+    "**/spec/**"
+  ],
+  "rules": [
+    {
+      "id": "security-sql-injection",
+      "name": "SQL注入风险",
+      "category": "security",
+      "severity": "blocker",
+      "path": "**/*.{java,py,js,ts,go,php,rb}",
+      "description": "检测字符串拼接或格式化构建SQL语句",
+      "check_patterns": ["+", "format", "f-string", "execute", "executeQuery", "raw"],
+      "exclude": ["**/*Test*", "**/test/**"]
+    },
+    {
+      "id": "security-xss",
+      "name": "XSS跨站脚本风险",
+      "category": "security",
+      "severity": "blocker",
+      "path": "**/*.{js,jsx,ts,tsx,html,py,java}",
+      "description": "检测未转义的用户输入渲染",
+      "check_patterns": ["innerHTML", "dangerouslySetInnerHTML", "v-html", "document.write"]
+    },
+    {
+      "id": "security-hardcoded-secrets",
+      "name": "硬编码密钥/密码",
+      "category": "security",
+      "severity": "blocker",
+      "path": "**/*.{java,py,js,ts,go,yaml,yml,json,properties,env}",
+      "description": "检测硬编码的密码、API密钥、Token",
+      "check_patterns": ["password", "secret", "api_key", "apikey", "token", "private_key", "access_key"],
+      "exclude": ["**/*Test*", "**/test/**", "*.example.*", "*.sample.*"]
+    },
+    {
+      "id": "security-path-traversal",
+      "name": "路径遍历风险",
+      "category": "security",
+      "severity": "blocker",
+      "path": "**/*.{java,py,js,ts,go,php}",
+      "description": "检测文件路径拼接中的目录遍历风险",
+      "check_patterns": ["../", "..\\", "os.path.join", "path.join", "File("]
+    },
+    {
+      "id": "quality-null-pointer",
+      "name": "空指针/空引用风险",
+      "category": "quality",
+      "severity": "high",
+      "path": "**/*.{java,kt,go,py,ts,js}",
+      "description": "检测可能为null/None/undefined的对象直接访问",
+      "check_patterns": [".get(", "->", "[", ".length", ".size()"]
+    },
+    {
+      "id": "quality-error-swallow",
+      "name": "异常吞没",
+      "category": "quality",
+      "severity": "high",
+      "path": "**/*.{java,py,js,ts,go}",
+      "description": "检测空的catch块或忽略错误",
+      "check_patterns": ["catch", "except", ".catch(", "pass", "// ignore", "// todo"]
+    },
+    {
+      "id": "quality-resource-leak",
+      "name": "资源泄漏风险",
+      "category": "quality",
+      "severity": "high",
+      "path": "**/*.{java,go,py}",
+      "description": "检测未关闭的文件/连接/流",
+      "check_patterns": ["open(", "new FileInputStream", "new Connection", "new Stream"]
+    },
+    {
+      "id": "perf-n-plus-one",
+      "name": "N+1查询风险",
+      "category": "performance",
+      "severity": "high",
+      "path": "**/*.{java,py,js,ts,go,rb}",
+      "description": "检测循环内的数据库查询或外部API调用",
+      "check_patterns": ["for", "while", "forEach", "map", ".query(", ".execute(", "fetch(", "axios."]
+    },
+    {
+      "id": "perf-inefficient-collection",
+      "name": "低效集合操作",
+      "category": "performance",
+      "severity": "medium",
+      "path": "**/*.{java,py,js,ts}",
+      "description": "检测O(n)查找替代O(1)的场景",
+      "check_patterns": [".indexOf(", "list.contains(", "in list", "ArrayList", "LinkedList"]
+    },
+    {
+      "id": "perf-memory-leak",
+      "name": "潜在内存泄漏",
+      "category": "performance",
+      "severity": "high",
+      "path": "**/*.{js,ts,jsx,tsx}",
+      "description": "检测未清理的事件监听器、定时器、闭包引用",
+      "check_patterns": ["addEventListener", "setInterval", "setTimeout", "new Map(", "new Set("]
+    },
+    {
+      "id": "maint-function-length",
+      "name": "函数/方法过长",
+      "category": "maintainability",
+      "severity": "medium",
+      "path": "**/*.{java,py,js,ts,go}",
+      "description": "检测超过合理长度的函数或方法",
+      "check_patterns": []
+    },
+    {
+      "id": "maint-duplicate-code",
+      "name": "重复代码",
+      "category": "maintainability",
+      "severity": "medium",
+      "path": "**/*.{java,py,js,ts,go}",
+      "description": "检测相似度高的代码块"
+    },
+    {
+      "id": "maint-magic-number",
+      "name": "魔法数字/硬编码常量",
+      "category": "maintainability",
+      "severity": "low",
+      "path": "**/*.{java,py,js,ts,go}",
+      "description": "检测未命名的硬编码数值常量",
+      "check_patterns": []
+    },
+    {
+      "id": "maint-import-order",
+      "name": "依赖混乱",
+      "category": "maintainability",
+      "severity": "low",
+      "path": "**/*.{java,py,js,ts,go}",
+      "description": "检测循环依赖、未使用的导入、通配符导入"
+    },
+    {
+      "id": "quality-race-condition",
+      "name": "竞态条件风险",
+      "category": "quality",
+      "severity": "high",
+      "path": "**/*.{java,go,py,js,ts}",
+      "description": "检测并发访问共享可变状态",
+      "check_patterns": ["synchronized", "Lock", "with lock", "async", "await", "goroutine"]
+    },
+    {
+      "id": "security-deserialization",
+      "name": "不安全的反序列化",
+      "category": "security",
+      "severity": "blocker",
+      "path": "**/*.{java,py,js,ts,php}",
+      "description": "检测不可信数据的反序列化",
+      "check_patterns": ["ObjectInputStream", "pickle.loads", "yaml.load(", "JSON.parse", "unserialize"]
+    },
+    {
+      "id": "quality-log-sensitivity",
+      "name": "敏感信息日志打印",
+      "category": "quality",
+      "severity": "high",
+      "path": "**/*.{java,py,js,ts,go}",
+      "description": "检测日志中打印敏感数据",
+      "check_patterns": ["log.", "logger.", "console.log", "print(", "fmt.Print", "System.out"]
+    },
+    {
+      "id": "maint-too-many-params",
+      "name": "函数参数过多",
+      "category": "maintainability",
+      "severity": "low",
+      "path": "**/*.{java,py,js,ts,go}",
+      "description": "检测参数超过合理数量的函数签名"
+    },
+    {
+      "id": "perf-unnecessary-object-creation",
+      "name": "不必要的对象创建",
+      "category": "performance",
+      "severity": "medium",
+      "path": "**/*.{java,py,js,ts,go}",
+      "description": "检测循环内频繁创建对象或字符串拼接"
+    },
+    {
+      "id": "quality-missing-validation",
+      "name": "缺少输入校验",
+      "category": "quality",
+      "severity": "high",
+      "path": "**/*.{java,py,js,ts,go}",
+      "description": "检测公共方法缺少参数校验",
+      "check_patterns": ["public ", "def ", "export function", "func "]
+    },
+    {
+      "id": "quality-dead-code",
+      "name": "虚假实现/死代码",
+      "category": "quality",
+      "severity": "high",
+      "path": "**/*.{java,py,js,ts,go}",
+      "description": "检测函数体只有 return 或空实现的虚假实现、永远为 true/false 的条件分支",
+      "check_patterns": ["=> {}", "=> { return", "TODO", "FIXME", "not implemented", "throw Error('not implemented")"]
+    },
+    {
+      "id": "quality-return-type-inconsistency",
+      "name": "返回类型不一致",
+      "category": "quality",
+      "severity": "high",
+      "path": "**/*.{java,py,js,ts,go}",
+      "description": "检测返回类型不一致（如正常数据混入 ERR string、success/failure 混用）",
+      "check_patterns": ["ERR:", "error:", "success:", "null", "undefined", "return result", "return error"]
+    },
+    {
+      "id": "security-division-by-zero",
+      "name": "除零风险",
+      "category": "security",
+      "severity": "medium",
+      "path": "**/*.{java,py,js,ts,go,cpp,c}",
+      "description": "检测缺少除零保护的除法/取模操作",
+      "check_patterns": []
+    },
+    {
+      "id": "quality-cli-validation",
+      "name": "CLI参数缺少校验",
+      "category": "quality",
+      "severity": "medium",
+      "path": "**/*.{js,ts,py,go,java,rb}",
+      "description": "检测 CLI 参数/环境变量缺少合法性校验（如未检查 argv 长度、未校验输入范围）",
+      "check_patterns": ["argv", "process.argv", "sys.argv", "getopt", "argparse", "flags.parse"]
+    },
+    {
+      "id": "perf-redundant-fs-call",
+      "name": "冗余文件系统调用",
+      "category": "performance",
+      "severity": "medium",
+      "path": "**/*.{js,ts,py,go,java}",
+      "description": "检测短时间内重复的文件状态/读取调用（如先 stat 再 exists 再 read）",
+      "check_patterns": ["statSync", "stat(", "existsSync", "accessSync", "readFileSync"]
+    },
+    {
+      "id": "quality-error-swallow-v2",
+      "name": "异常吞没（精确）",
+      "category": "quality",
+      "severity": "high",
+      "path": "**/*.{java,py,js,ts,go}",
+      "description": "检测空的catch块或只有log没有处理的异常捕获（排除有实际修复逻辑的catch块）",
+      "check_patterns": ["catch {}", "except:", ".catch(() => {}", "catch(e) {}", "pass  #", "// ignore", "console.log(e)"]
+    }
+  ]
+}
